@@ -62,9 +62,29 @@ public class WordCount
 			}
 		}
 	}
-	
-	public static void main(String args[]) throws ParseException 
+	public static int readCharactersFromFile(String inputFilePath) throws IOException 
 	{
-			
+		File file = new File(inputFilePath);
+		Reader reader = null;
+		reader = new InputStreamReader(new FileInputStream(file));
+		int tempchar;
+		while ((tempchar = reader.read()) != -1)
+		{   
+            if (((char) tempchar) != '\r') 
+            {  
+                char_num++;  
+            }  
+         }  
+        reader.close();
+		return char_num;  
+	}
+	
+	
+	public static void main(String args[]) throws IOException 
+	{
+			parProcess(args);
+			System.out.println(inputFilePath);
+			if(c)
+				System.out.println(readCharactersFromFile(inputFilePath));
 	}
 }
