@@ -1,5 +1,4 @@
 package wordcount.first;
-import org.apache.commons.cli.*;
 import java.io.*;
 
 public class WordCount 
@@ -97,18 +96,16 @@ public class WordCount
 	//¶Áµ¥´Ê
 	public static int readWordsFromFile(String inputFilePath) throws IOException
 	{
-		File file = new File(inputFilePath);
-		InputStreamReader reader = new InputStreamReader(new FileInputStream(file));
-		int tempchar;
-		while ((tempchar = reader.read()) != -1)
-		{   
-            if (((char) tempchar) != '\r') 
-            {  
-                word_num++;  
-            }  
-         }  
+		File file = new File(inputFilePath);  
+        BufferedReader reader = null;   
+        reader = new BufferedReader(new FileReader(file));  
+        String tempString = null;   
+        while ((tempString = reader.readLine()) != null)
+        {    
+        	word_num += tempString.split("( |,)+").length;
+        }  
         reader.close();
-		return word_num;  
+        return word_num; 
 	}
 	
 	//Ð´ÎÄ¼þ
