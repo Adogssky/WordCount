@@ -1,0 +1,7 @@
+file.txt,单词数:18
+file.txt,单词数:a
+file.txt,单词数:a
+file.txt,代码行/空行/注释行:4/0/0
+file.txt,代码行/空行/注释行:4/6/0
+file.txt,代码行/空行/注释行:4/2/0
+file.txt,代码行/空行/注释行:4/4/2

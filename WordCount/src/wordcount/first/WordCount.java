@@ -1,5 +1,6 @@
 package wordcount.first;
 import java.io.*;
+import java.util.*;
 
 public class WordCount 
 {
@@ -16,6 +17,9 @@ public class WordCount
 	static int char_num = 0;//字符数
 	static int word_num = 0;//单词数
 	static int line_num = 0;//行数
+	static int codeline_num;//代码行数
+	static int annoline_num;//注释行数
+	static int emptyline_num;//空行数
 	
 	//初始文件路径变量
 	static String inputFilePath = "";//输入文件路径
@@ -48,6 +52,15 @@ public class WordCount
 					o = true;
 					i++;
 					outputFilePath = args[i];
+					break;
+				case "-s": //递归文件夹
+					s = true;
+					break;
+				case "-a": //复杂处理
+					a = true;
+					break;
+				case "-e": //停用表
+					e = true;
 					break;
 				default: //输入路径参数处理
 					inputFilePath = args[i];
@@ -108,6 +121,43 @@ public class WordCount
         return word_num; 
 	}
 	
+	//读复杂行
+	public static void readComplexLinesFromFile(String inputFilePath) throws IOException 
+	{
+		int emptyFlag = 0;
+		File file = new File(inputFilePath);  
+        BufferedReader reader = null;   
+        reader = new BufferedReader(new FileReader(file));  
+        String tempString = null;   
+        while ((tempString = reader.readLine()) != null)
+        {    
+        	char[] array = tempString.toCharArray();
+        	for(int i =0 ; i < array.length; i++) 
+        	{
+        		if(array[i] != ' ')
+        		{
+        			emptyFlag = 1;
+        			if((array[i] == '/' && array[i+1] == '/') || (array[i] == '/' && array[i+1] == '*') || (array[array.length - 2] == '*' && array[array.length -1] == '/'))
+        			{
+        				annoline_num++;
+        				break;
+        			}
+        			else
+        			{
+        				codeline_num++;
+        				break;
+        			}
+        		}
+        			
+        	}
+        	if(emptyFlag == 0)
+        		emptyline_num++;
+        	emptyFlag = 0;
+        }  
+            reader.close();	
+
+	}
+	
 	//写文件
 	public static void writeFile(String outputFilePath, String outputFileContent) throws IOException 
 	{
@@ -121,13 +171,11 @@ public class WordCount
             bw.write(outputFileContent);
             bw.close();
             fw.close(); 
-        } catch (FileNotFoundException e) {  
-            // TODO Auto-generated catch block  
+        } catch (FileNotFoundException e) {   
             e.printStackTrace();  
         }		
 	}
 	
-
 	public static void main(String args[]) throws IOException 
 	{
 		try {
@@ -151,6 +199,13 @@ public class WordCount
 				System.out.println(readWordsFromFile(inputFilePath));
 				String wordContent = inputFilePath + ",单词数:" + word_num + "\r\n";
 				outputFileContent += wordContent;	
+			}
+			if(a) 
+			{
+				readComplexLinesFromFile(inputFilePath);
+				System.out.println(codeline_num);
+				String complexLineContent = inputFilePath + ",代码行/空行/注释行:" + codeline_num + "/" + emptyline_num + "/" + annoline_num + "\r\n";
+				outputFileContent += complexLineContent;	
 			}
 			writeFile(outputFilePath, outputFileContent);
 		} catch (FileNotFoundException e2) 
