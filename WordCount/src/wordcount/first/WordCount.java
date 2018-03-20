@@ -22,7 +22,7 @@ public class WordCount
 	static String inputFilePath = "";//输入文件路径
 	static String outputFilePath = "result.txt";//输出文件路径
 	
-	
+	//参数处理部分
 	public static void parProcess(String args[]) 
 	{
 		if(args.length == 0) 
@@ -36,26 +36,26 @@ public class WordCount
 			{
 				switch(args[i])
 				{
-				case "-c":
+				case "-c": //字符参数处理
 					c = true;
 					break;
-				case "-w":
+				case "-w": //单词参数处理
 					w = true;
 					break;
-				case "-l":
+				case "-l": //行数参数处理
 					l = true;
 					break;
-				case "-o":
+				case "-o": //输出参数处理
 					o = true;
 					i++;
 					outputFilePath = args[i];
 					break;
-				default:
+				default: //输入路径参数处理
 					inputFilePath = args[i];
 					break;
 				}
 			}
-			if(inputFilePath == "") 
+			if(inputFilePath == "") //无文件输入时报错
 			{
 				System.out.println("没有文件名，请输入");
 				return;
@@ -63,6 +63,7 @@ public class WordCount
 		}
 	}
 	
+	//读字符
 	public static int readCharactersFromFile(String inputFilePath) throws IOException 
 	{
 		File file = new File(inputFilePath);  
@@ -78,6 +79,7 @@ public class WordCount
 
 	}
 	
+	//读行
 	public static int readLinesFromFile(String inputFilePath) throws IOException
 	{
 		File file = new File(inputFilePath);  
@@ -92,6 +94,7 @@ public class WordCount
 			return line_num;
 	}
 	
+	//读单词
 	public static int readWordsFromFile(String inputFilePath) throws IOException
 	{
 		File file = new File(inputFilePath);
@@ -108,6 +111,7 @@ public class WordCount
 		return word_num;  
 	}
 	
+	//写文件
 	public static void writeFile(String outputFilePath, String outputFileContent) throws IOException 
 	{
         try {  
@@ -133,19 +137,19 @@ public class WordCount
 			String outputFileContent = "";
 			parProcess(args);
 			System.out.println(inputFilePath);
-			if(c) 
+			if(c) //读字符参数输入时
 			{
 				System.out.println(readCharactersFromFile(inputFilePath));
 				String charContent = inputFilePath + ",字符数:" + char_num + "\r\n";
 				outputFileContent += charContent;	
 			}	
-			if(l) 
+			if(l) //读行参数输入时
 			{
 				System.out.println(readLinesFromFile(inputFilePath));
 				String lineContent = inputFilePath + ",行数:" + line_num + "\r\n";
 				outputFileContent += lineContent;	
 			}
-			if(w) 
+			if(w) //读单词参数输入时
 			{
 				System.out.println(readWordsFromFile(inputFilePath));
 				String wordContent = inputFilePath + ",单词数:" + word_num + "\r\n";
