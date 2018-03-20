@@ -20,7 +20,7 @@ public class WordCount
 	
 	//初始文件路径变量
 	static String inputFilePath = "";//输入文件路径
-	static String outputFilePath = "";//输出文件路径
+	static String outputFilePath = "result.txt";//输出文件路径
 	
 	
 	public static void parProcess(String args[]) 
@@ -38,21 +38,21 @@ public class WordCount
 				{
 				case "-c":
 					c = true;
-					return;
+					break;
 				case "-w":
-					c = true;
-					return;
+					w = true;
+					break;
 				case "-l":
-					c = true;
-					return;
+					l = true;
+					break;
 				case "-o":
-					c = true;
+					o = true;
 					i++;
 					outputFilePath = args[i];
-					return;
+					break;
 				default:
 					inputFilePath = args[i];
-					return;
+					break;
 				}
 			}
 			if(inputFilePath == "") 
@@ -62,29 +62,100 @@ public class WordCount
 			}
 		}
 	}
+	
 	public static int readCharactersFromFile(String inputFilePath) throws IOException 
 	{
+		File file = new File(inputFilePath);  
+        BufferedReader reader = null;   
+        reader = new BufferedReader(new FileReader(file));  
+        String tempString = null;   
+        while ((tempString = reader.readLine()) != null)
+        {    
+        	char_num += tempString.length();  
+        }  
+            reader.close();
+			return char_num;
+
+	}
+	
+	public static int readLinesFromFile(String inputFilePath) throws IOException
+	{
+		File file = new File(inputFilePath);  
+        BufferedReader reader = null;   
+        reader = new BufferedReader(new FileReader(file));  
+        String tempString = null;   
+        while ((tempString = reader.readLine()) != null)
+        {    
+        	line_num++;  
+        }  
+            reader.close();
+			return line_num;
+	}
+	
+	public static int readWordsFromFile(String inputFilePath) throws IOException
+	{
 		File file = new File(inputFilePath);
-		Reader reader = null;
-		reader = new InputStreamReader(new FileInputStream(file));
+		InputStreamReader reader = new InputStreamReader(new FileInputStream(file));
 		int tempchar;
 		while ((tempchar = reader.read()) != -1)
 		{   
             if (((char) tempchar) != '\r') 
             {  
-                char_num++;  
+                word_num++;  
             }  
          }  
         reader.close();
-		return char_num;  
+		return word_num;  
 	}
 	
+	public static void writeFile(String outputFilePath, String outputFileContent) throws IOException 
+	{
+        try {  
+            File file = new File(outputFilePath);  
+            if (!file.exists()) {  
+	            file.createNewFile();  
+	        } 
+            FileWriter fw = new FileWriter(outputFilePath, true);  
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(outputFileContent);
+            bw.close();
+            fw.close(); 
+        } catch (FileNotFoundException e) {  
+            // TODO Auto-generated catch block  
+            e.printStackTrace();  
+        }		
+	}
 	
+
 	public static void main(String args[]) throws IOException 
 	{
+		try {
+			String outputFileContent = "";
 			parProcess(args);
 			System.out.println(inputFilePath);
-			if(c)
+			if(c) 
+			{
 				System.out.println(readCharactersFromFile(inputFilePath));
+				String charContent = inputFilePath + ",字符数:" + char_num + "\r\n";
+				outputFileContent += charContent;	
+			}	
+			if(l) 
+			{
+				System.out.println(readLinesFromFile(inputFilePath));
+				String lineContent = inputFilePath + ",行数:" + line_num + "\r\n";
+				outputFileContent += lineContent;	
+			}
+			if(w) 
+			{
+				System.out.println(readWordsFromFile(inputFilePath));
+				String wordContent = inputFilePath + ",单词数:" + word_num + "\r\n";
+				outputFileContent += wordContent;	
+			}
+			writeFile(outputFilePath, outputFileContent);
+		} catch (FileNotFoundException e2) 
+		{
+			e2.printStackTrace();
+		}
+			
 	}
 }
