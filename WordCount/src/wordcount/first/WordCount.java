@@ -28,6 +28,9 @@ public class WordCount
 	static String outputFilePath = "result.txt";//输出文件路径
 	static String stopListFilePath = ""; //停用表路径
 	
+	//文件表
+	 static ArrayList<String> dirctorys = new ArrayList<String>();;
+	
 	//参数处理部分
 	public static void parProcess(String args[]) 
 	{
@@ -208,6 +211,33 @@ public class WordCount
         
 	}
 	
+//	public static ArrayList<String> recDirectory(String inputPath) 
+//	{
+//		File directory = new File(inputPath);    
+//        if(directory.isDirectory()){  
+//            File [] filelist = directory.listFiles();  
+//            for(int i = 0; i < filelist.length; i ++){  
+//                //如果当前是文件夹，进入递归扫描文件夹 
+//                if(filelist[i].isDirectory()){  
+//                	System.out.println("fuck");
+//                    //递归扫描下面的文件夹 
+//                	recDirectory(filelist[i].getAbsolutePath());  
+//                }  
+//                //非文件夹  
+//                else{  
+//                	String[] array_0 = inputFilePath.split("");
+//                	String[] array_1 = filelist[i].getName().split("");
+//                	if(array_1[array_1.length - 1].equals(array_0[array_0.length - 1]))
+//                		dirctorys.add(filelist[i].getAbsolutePath());
+//                }  
+//            }
+//        }else 
+//        {
+//        	 throw new NullPointerException("fuck");
+//        }
+//		return dirctorys;
+//	}
+//	
 	//写文件
 	public static void writeFile(String outputFilePath, String outputFileContent) throws IOException 
 	{
@@ -226,44 +256,59 @@ public class WordCount
         }		
 	}
 	
+	//输出文件内容构造
+	public static String contentConstruct() throws IOException 
+	{
+		String outputFileContent = "";
+		if(c) //读字符参数输入时
+		{
+			System.out.println(readCharactersFromFile(inputFilePath));
+			String charContent = inputFilePath + ",字符数:" + char_num + "\r\n";
+			outputFileContent += charContent;	
+		}	
+		if(l) //读行参数输入时
+		{
+			System.out.println(readLinesFromFile(inputFilePath));
+			String lineContent = inputFilePath + ",行数:" + line_num + "\r\n";
+			outputFileContent += lineContent;	
+		}
+		if(w) //读单词参数输入时
+		{
+			System.out.println(readWordsFromFile(inputFilePath));
+			String wordContent = inputFilePath + ",单词数:" + word_num + "\r\n";
+			outputFileContent += wordContent;	
+		}
+		if(a) //复杂行参数输入
+		{
+			readComplexLinesFromFile(inputFilePath);
+			System.out.println(codeline_num);
+			String complexLineContent = inputFilePath + ",代码行/空行/注释行:" + codeline_num + "/" + emptyline_num + "/" + annoline_num + "\r\n";
+			outputFileContent += complexLineContent;	
+		}
+		if(e) //停用表
+		{
+			System.out.println(stopWordList(inputFilePath, stopListFilePath));
+			String postStopWordContent = inputFilePath + ",停用词表后单词数:" + poststopword_num + "\r\n";
+			outputFileContent += postStopWordContent;
+		}
+//		if(s) //递归
+//		{
+//			recDirectory("./");
+//			for(int i = 1; i< dirctorys.size();i++) 
+//			{
+//				inputFilePath = dirctorys.get(i);
+//				contentConstruct();
+//			}			
+//		}
+		return outputFileContent;
+	}
+	
 	public static void main(String args[]) throws IOException 
 	{
 		try {
-			String outputFileContent = "";
 			parProcess(args);
 			System.out.println(inputFilePath);
-			if(c) //读字符参数输入时
-			{
-				System.out.println(readCharactersFromFile(inputFilePath));
-				String charContent = inputFilePath + ",字符数:" + char_num + "\r\n";
-				outputFileContent += charContent;	
-			}	
-			if(l) //读行参数输入时
-			{
-				System.out.println(readLinesFromFile(inputFilePath));
-				String lineContent = inputFilePath + ",行数:" + line_num + "\r\n";
-				outputFileContent += lineContent;	
-			}
-			if(w) //读单词参数输入时
-			{
-				System.out.println(readWordsFromFile(inputFilePath));
-				String wordContent = inputFilePath + ",单词数:" + word_num + "\r\n";
-				outputFileContent += wordContent;	
-			}
-			if(a) 
-			{
-				readComplexLinesFromFile(inputFilePath);
-				System.out.println(codeline_num);
-				String complexLineContent = inputFilePath + ",代码行/空行/注释行:" + codeline_num + "/" + emptyline_num + "/" + annoline_num + "\r\n";
-				outputFileContent += complexLineContent;	
-			}
-			if(e) 
-			{
-				System.out.println(stopWordList(inputFilePath, stopListFilePath));
-				String postStopWordContent = inputFilePath + ",停用词表后单词数:" + poststopword_num + "\r\n";
-				outputFileContent += postStopWordContent;
-			}
-			writeFile(outputFilePath, outputFileContent);
+			writeFile(outputFilePath, contentConstruct());
 		} catch (FileNotFoundException e2) 
 		{
 			e2.printStackTrace();
