@@ -17,13 +17,16 @@ public class WordCount
 	static int char_num = 0;//字符数
 	static int word_num = 0;//单词数
 	static int line_num = 0;//行数
-	static int codeline_num;//代码行数
-	static int annoline_num;//注释行数
-	static int emptyline_num;//空行数
+	static int codeline_num = 0;//代码行数
+	static int annoline_num = 0;//注释行数
+	static int emptyline_num = 0;//空行数
+	static int prestopword_num = 0; //停用表前单词数
+	static int poststopword_num = 0; //停用表后单词数
 	
 	//初始文件路径变量
 	static String inputFilePath = "";//输入文件路径
 	static String outputFilePath = "result.txt";//输出文件路径
+	static String stopListFilePath = ""; //停用表路径
 	
 	//参数处理部分
 	public static void parProcess(String args[]) 
@@ -61,6 +64,8 @@ public class WordCount
 					break;
 				case "-e": //停用表
 					e = true;
+					i++;
+					stopListFilePath = args[i];
 					break;
 				default: //输入路径参数处理
 					inputFilePath = args[i];
@@ -158,6 +163,51 @@ public class WordCount
 
 	}
 	
+	//停用词表
+	public static int stopWordList(String inputFilePath, String stopListFilePath) throws IOException 
+	{
+		int stopword_num = 0;
+		String[] stopList = null; //停用词表
+		String[] originalList = null; //原单词表
+		File stopFile = new File(stopListFilePath); //停用文件 
+		File originalFile = new File(inputFilePath); //原文件
+		//分别读行部分
+        BufferedReader reader_0 = null;   
+        BufferedReader reader_1 = null; 
+        reader_0 = new BufferedReader(new FileReader(stopFile));  
+        reader_1 = new BufferedReader(new FileReader(originalFile)); 
+        String tempString_0 = null;  
+        String tempString_1 = null; 
+        //比较部分
+        while ((tempString_0 = reader_0.readLine()) != null)
+        {    
+        	stopList= tempString_0.split("( |,)+");
+        	while ((tempString_1 = reader_1.readLine()) != null)
+            {    
+            	originalList = tempString_1.split("( |,)+");
+            	prestopword_num += tempString_1.split("( |,)+").length;
+            	for(int i = 0; i < originalList.length; i++) 
+                {
+                	for(int j = 0; j < stopList.length; j++) 
+                	{
+                		if(originalList[i].equals(stopList[j])) 
+                		{
+                			stopword_num++;
+                			stopList[j] = " ";
+                		}
+
+                	}
+                }
+            }  
+        }  
+        reader_0.close();
+        reader_1.close();
+        poststopword_num = prestopword_num - stopword_num;
+        System.out.println(stopword_num);
+		return poststopword_num;
+        
+	}
+	
 	//写文件
 	public static void writeFile(String outputFilePath, String outputFileContent) throws IOException 
 	{
@@ -206,6 +256,12 @@ public class WordCount
 				System.out.println(codeline_num);
 				String complexLineContent = inputFilePath + ",代码行/空行/注释行:" + codeline_num + "/" + emptyline_num + "/" + annoline_num + "\r\n";
 				outputFileContent += complexLineContent;	
+			}
+			if(e) 
+			{
+				System.out.println(stopWordList(inputFilePath, stopListFilePath));
+				String postStopWordContent = inputFilePath + ",停用词表后单词数:" + poststopword_num + "\r\n";
+				outputFileContent += postStopWordContent;
 			}
 			writeFile(outputFilePath, outputFileContent);
 		} catch (FileNotFoundException e2) 
